@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+// }
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  fullname       String     @db.VarChar(255)
+  email          String     @unique @db.VarChar(255)
+  username       String     @unique @db.VarChar(255)
+  password       String     @db.VarChar(255)
+  bio            String?    @db.Text
+  image          String?    @db.VarChar(255)
+  imageId        String?    @db.VarChar(255)
+  followingCount Int        @default(0) @db.Integer
+  followerCount  Int        @default(0) @db.Integer
+  postCount      Int        @default(0) @db.Integer
+  createdAt      DateTime   @default(now())
+  posts          Post[] // untuk mengambil semua relasi di Post
+  comments       Comment[]
+  bookmarks      Bookmark[]
+  likes          Likes[]
+  followings     Follow[]   @relation("Followings")
+  followers      Follow[]   @relation("Followers")
+}
+
+model Post {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  image        String     @db.VarChar(255)
+  imageId      String     @db.VarChar(255)
+  caption      String     @db.Text
+  likeCount    Int        @default(0) @db.Integer
+  commentCount Int        @default(0) @db.Integer
+  createdAt    DateTime   @default(now())
+  comments     Comment[]
+  bookmarks    Bookmark[]
+  likes        Likes[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Bookmark {
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId]) // untuk membuat userId & postId menjadi PK pada table ini
+}
+
+model Likes {
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId]) // untuk membuat userId & postId menjadi PK pada table ini
+}
+
+model Follow {
+  followerId  Int
+  follower    User     @relation("Followers", fields: [followerId], references: [id])
+  followingId Int
+  following   User     @relation("Followings", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
