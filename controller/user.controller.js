@@ -99,7 +99,7 @@ export const updateUser = async (req, res) => {
             }
         })
 
-        if (currentUser) {
+        if (currentUser && currentUser.id !== req.user.id) {
             return res.status(400).json({
                 message: "Username sudah digunakan, silahkan gunakan username lain"
             })
