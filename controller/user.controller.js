@@ -135,7 +135,11 @@ export const updateUser = async (req, res) => {
             })
 
             // jika express.js error
-            res.status(500).json({ message: "Server Down" })
+            console.log(err)
+            res.status(500).json({
+                message: "Server Down",
+                error
+            })
         }
     }
 
