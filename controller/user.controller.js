@@ -130,16 +130,11 @@ export const updateUser = async (req, res) => {
         if (err instanceof Error && 'issues' in err) {
             // zod
             const errors = err.issues.map((i) => i.message)
-            return res.status(400).json({
-                message: errors
-            })
+            return res.status(400).json({ message: errors })
 
             // jika express.js error
             console.log(err)
-            res.status(500).json({
-                message: "Server Down",
-                error
-            })
+            res.status(500).json({ message: "Server Down" })
         }
     }
 
