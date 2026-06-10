@@ -85,6 +85,9 @@ export const RegisterUser = async (req, res) => {
 
     const { username, email, password, fullname } = req.body
 
+    const jwtSecret = process.env.JWTSECRET
+    const token = jwt.sign({ id: newUser.id }, jwtSecret, { expiresIn: '6d' });
+
     res.json({
         message: "Register User",
         data: {
