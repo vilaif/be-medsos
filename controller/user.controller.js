@@ -19,7 +19,8 @@ export const getUsernameByUsername = async (req, res) => {
                     omit: {
                         userId: true,
                         imageId: true
-                    }
+                    },
+                    orderBy: { createdAt: 'desc' }
                 },
                 bookmarks: {
                     include: {
