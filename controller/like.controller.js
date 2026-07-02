@@ -30,8 +30,24 @@ export const LikeFeedUser = async (req, res) => {
         })
 
         if (CheckLike) {
-            return res.status(400).json({
-                message: 'Post sudah pernah anda like'
+            await prisma.likes.delete({
+                where: { 
+                    userId_postId: {
+                        userId: currentUserId,
+                        postId: Number(postId)
+                    } 
+                }
+            })
+
+            await prisma.post.update({
+                where: { id: Number(postId) },
+                data: {
+                    likeCount: {decrement: 1}
+                }
+            })
+
+            return res.status(200).json({
+                message: 'Unlike Post berhasil'
             })
         }
 
